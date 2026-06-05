@@ -19,31 +19,40 @@
 ## 서비스 흐름
 
 ```mermaid
-flowchart TD
+graph TD
     classDef actor fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
     classDef system fill:#f5f5f5,stroke:#757575,stroke-width:1px
     classDef highlight fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    Customer["고객"]:::actor
-    Admin["운영자"]:::actor
-    Imweb["아임웹 쇼핑몰"]:::system
-    GForm["참가 신청서 (구글폼)"]:::system
-    GSheets[("구글 시트 (주문 · 참가자 데이터)")]:::system
-    Aligo["카카오 알림톡"]:::system
-    AutoScript["구글 자동화 스크립트 (GAS)"]:::highlight
-    Server["자동화 서버"]:::highlight
-    Customer -->|① 결제 완료| Imweb
-    Customer -->|③ 참가 신청서 작성 · 제출| GForm
-    Imweb -->|주문 발생 시 자동 전달| Server
-    Server -->|주문 정보 자동 저장| GSheets
-    Server -->|결제 완료 안내 자동 발송| Aligo
-    Server -->|행사 D-2 리마인더 자동 발송| Aligo
-    GForm -->|신청서 제출 시 자동 처리| AutoScript
-    AutoScript -->|참가자 정보 자동 저장| GSheets
-    AutoScript -->|중복 신청 감지 시 알림| Aligo
-    GSheets -.->|행사 일정 변경 시 신청서 선택지 자동 업데이트| AutoScript
-    Aligo -->|② · ④ 알림톡 수신| Customer
-    Aligo -->|⑤ 중복 신청 알림 수신| Admin
-    GSheets -.->|현황 확인| Admin
+
+    Customer["👤 고객"]:::actor
+    Admin["👨‍💼 운영자"]:::actor
+
+    subgraph External["외부 서비스"]
+        Imweb["🛒 아임웹 쇼핑몰"]:::system
+        GForm["📝 참가 신청서 (구글폼)"]:::system
+    end
+
+    subgraph Core["자동화 시스템"]
+        Server["⚙️ 자동화 서버"]:::highlight
+        GAS["🔧 GAS 자동화 스크립트"]:::highlight
+        GSheets[("📊 구글 시트")]:::system
+    end
+
+    Aligo1["💬 카카오 알림톡\n② 웰컴 · ④ D-2"]:::system
+    Aligo2["💬 카카오 알림톡\n⑤ 중복 감지"]:::system
+
+    Customer -->|"① 결제 완료"| Imweb
+    Imweb -->|"주문 자동 전달"| Server
+    Server -->|"데이터 저장"| GSheets
+    Server --> Aligo1
+    Aligo1 -->|"② ④ 알림 수신"| Customer
+
+    Customer -->|"③ 신청서 제출"| GForm
+    GForm -->|"자동 처리"| GAS
+    GAS -->|"참가자 저장"| GSheets
+    GAS --> Aligo2
+    Aligo2 -->|"⑤ 알림 수신"| Admin
+    GSheets -.->|"현황 확인"| Admin
 ```
 
 ---
