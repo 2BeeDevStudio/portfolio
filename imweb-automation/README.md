@@ -6,13 +6,13 @@
 
 ## 기술 스택
 
-| 구분 | 기술 |
-|------|------|
-| Backend | Python 3.9, Flask, Gunicorn |
-| Server | AWS EC2 (t4g), Nginx |
-| Automation | Google Apps Script (GAS) |
+| 구분         | 기술                                             |
+| ------------ | ------------------------------------------------ |
+| Backend      | Python 3.9, Flask, Gunicorn                      |
+| Server       | AWS EC2 (t4g), Nginx                             |
+| Automation   | Google Apps Script (GAS)                         |
 | External API | 아임웹 Webhook, 알리고 알림톡, Google Sheets API |
-| Infra | systemd, crontab, Let's Encrypt SSL |
+| Infra        | systemd, crontab, Let's Encrypt SSL              |
 
 ---
 
@@ -33,8 +33,8 @@ graph TD
     end
 
     subgraph Core["자동화 시스템"]
-        Server["⚙️ 서버"]:::highlight
-        GAS["🔧 GAS"]:::highlight
+        Server["⚙️ 자동화 서버"]:::highlight
+        GAS["🔧 Google App Script"]:::highlight
         GSheets[("📊 구글 시트")]:::system
     end
 
@@ -147,35 +147,41 @@ graph TD
 ## 주요 기능
 
 ### 1. 주문 자동화 (Webhook)
+
 - 아임웹 주문 발생 시 Webhook 수신
 - 신용카드 즉시결제 → 웰컴 알림톡 즉시 발송
 - 무통장입금 → 입금 확인 후 자동 발송
 - 발송 실패 시 FAIL 기록 → 크론으로 자동 재시도
 
 ### 2. 알림톡 자동화
+
 - 결제완료 안내 + 구글폼 링크 발송 (토큰 기반 본인 확인)
 - 행사 D-0 / D-1 / D-2 예약확정 알림 자동 발송
 - 전화번호 정규화 (010-1234-5678 등 다양한 형식 지원)
 - 발송 실패 건 FAIL 기록 및 자동 재시도
 
 ### 3. 구글 시트 연동
+
 - 주문 정보 자동 기록
 - 구글폼 응답 → 참가자 선택 날짜 자동 동기화
 - 중복 폼 제출 감지 → 운영자 알림톡 자동 발송
 - 확정행사일 입력 시 참가자정보 자동 업데이트 (GAS onEdit)
 
 ### 4. 라인업 페이지 API
+
 - 행사 목록 + 참가자 현황 실시간 제공
 - 5분 캐시로 Google Sheets API 호출 최소화
 - Thread-safe Lock으로 Cache Stampede 방지
 - 지역별 탭 필터 지원
 
 ### 5. 일자별 명단 조회
+
 - 행사일 기준 참가자 명단 자동 생성
 - 성별 구분, 결제 여부 포함
 - GAS 메뉴에서 원클릭 조회
 
 ### 6. 참가자 수동 등록
+
 - 운영자 직접 입력 시트 제공
 - 주문내역 + 참가자정보 시트 자동 연동
 
@@ -187,11 +193,11 @@ graph TD
 
 알리고 알림톡 API는 고정 IP 등록이 필수라 서버리스 단독 사용이 불가능했음.
 
-| 방식 | 고정 IP | 비용 |
-|------|---------|------|
-| Lambda + NAT Gateway | ✅ | ~$35/월 |
-| **EC2 + Elastic IP** | **✅** | **~$5/월** |
-| Lambda 단독 | ❌ | 알리고 사용 불가 |
+| 방식                 | 고정 IP | 비용             |
+| -------------------- | ------- | ---------------- |
+| Lambda + NAT Gateway | ✅      | ~$35/월          |
+| **EC2 + Elastic IP** | **✅**  | **~$5/월**       |
+| Lambda 단독          | ❌      | 알리고 사용 불가 |
 
 → EC2 + Elastic IP 방식 채택. 비용 **87% 절감**
 
@@ -227,21 +233,23 @@ graph TD
 
 ## 트러블슈팅 히스토리
 
-| 발생 일자 | 이슈 | 조치 |
-|-----------|------|------|
-| 2026-06-01 | Flask 디버그 모드 구동 중 OOM으로 서버 다운 | Swap 2GB 추가, Gunicorn 운영 모드 전환 |
-| 2026-06-02 | Gunicorn 워커 메모리 누수 위험 | `--max-requests 500` 워커 자동 리프레시, `gc.collect()` 강제 호출 |
-| 2026-06-03 | 라인업 페이지 요청마다 시트 API 3개 호출로 메모리 급증 | 5분 캐시 + Thread-safe Lock 적용, 시트 읽기 범위 최적화 |
-| 2026-06-05 | 워커당 109MB → 390MB 지속 증가 | Google Sheets API 클라이언트 싱글톤 캐싱, 420MB 안정화 |
+| 발생 일자  | 이슈                                                   | 조치                                                              |
+| ---------- | ------------------------------------------------------ | ----------------------------------------------------------------- |
+| 2026-06-01 | Flask 디버그 모드 구동 중 OOM으로 서버 다운            | Swap 2GB 추가, Gunicorn 운영 모드 전환                            |
+| 2026-06-02 | Gunicorn 워커 메모리 누수 위험                         | `--max-requests 500` 워커 자동 리프레시, `gc.collect()` 강제 호출 |
+| 2026-06-03 | 라인업 페이지 요청마다 시트 API 3개 호출로 메모리 급증 | 5분 캐시 + Thread-safe Lock 적용, 시트 읽기 범위 최적화           |
+| 2026-06-05 | 워커당 109MB → 390MB 지속 증가                         | Google Sheets API 클라이언트 싱글톤 캐싱, 420MB 안정화            |
 
 ---
 
 ## 트러블슈팅
 
 ### 메모리 누수 해결
+
 **문제:** EC2 t4g.micro (1GB RAM) 에서 1~2시간마다 메모리가 800MB 이상으로 치솟아 서버 불안정
 
 **원인 분석:**
+
 ```
 재시작 직후  → 워커당 109MB
 1~2시간 후   → 워커당 390MB (+281MB 누수)
@@ -250,6 +258,7 @@ graph TD
 Google Sheets API 클라이언트(`build()`)를 매 요청마다 새로 생성하면서 메모리 누적
 
 **해결:**
+
 ```python
 # Before: 매 요청마다 새 객체 생성
 def _get_service():
@@ -276,9 +285,11 @@ def _get_service():
 ---
 
 ### 전화번호 형식 불일치
+
 **문제:** 구글 시트가 전화번호를 숫자로 인식해 앞자리 `0` 제거 (01012345678 → 1012345678)
 
 **해결:** 발송 전 숫자만 추출 후 11자리 검증
+
 ```python
 # utils/validators.py
 def normalize_phone(phone: str) -> str:
@@ -296,12 +307,15 @@ def is_valid_phone(phone: str) -> bool:
 ## 스크린샷
 
 ### 라인업 페이지
+
 ![라인업 페이지](images/lineup.png)
 
 ### 주문내역 구글 시트
+
 ![구글 시트](images/sheet.png)
 
 ### UptimeRobot 모니터링
+
 ![UptimeRobot](images/uptime.png)
 
 ---
