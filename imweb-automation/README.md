@@ -33,8 +33,8 @@ graph TD
     end
 
     subgraph Core["자동화 시스템"]
-        Server["⚙️ 자동화 서버"]:::highlight
-        GAS["🔧 GAS 자동화 스크립트"]:::highlight
+        Server["⚙️ 서버"]:::highlight
+        GAS["🔧 GAS"]:::highlight
         GSheets[("📊 구글 시트")]:::system
     end
 
