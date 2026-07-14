@@ -2,7 +2,7 @@
 
 주문·업무 자동화부터 백엔드 아키텍처 설계, 대형 ERP 유지보수까지 — **서버 셋업부터 운영까지 직접 해온 풀스택 개발자**입니다.
 
-📮 dwkang0526@gmail.com · 🌐 [2bee.dev](https://2bee.dev)
+📮 2beedevstudio@gmail.com · 🌐 [2bee.dev](https://2bee.dev)
 
 ---
 
