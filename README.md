@@ -21,6 +21,7 @@
 | [Baton+](baton-plus/README.md)<br>퇴사·휴직 인수인계 B2B SaaS | 문서, 메일, 카톡을 AI로 인계서 초안으로 정리하고, 빠진 일을 찾아 떠나기 전에 물어봅니다 | 자사 서비스, 1인 기획·개발·운영<br>2026.07 ~ 운영 중 | Java 21, Spring Boot, PostgreSQL, React, Claude API |
 | [로테이션 소개팅 예약·운영 자동화](imweb-automation/README.md)<br>아임웹 쇼핑몰 자동화 | 결제 웹훅에서 구글 시트, 카카오 알림톡, 외부 매칭 앱 API 연동까지 사람 손 없이 돌아가게 만들었습니다 | 외주, 서버 셋업부터 혼자<br>2026.04 ~ 운영·유지보수 중 | Python, Flask, AWS EC2, Apps Script |
 | [커머스 통합관리 ERP](commerce-erp/README.md)<br>농수산물 유통 ERP | 주문, 출고, 정산, CS, 마진 통합관리와 사방넷 API 연동 | 유지보수, 기능 개선<br>2025.09 ~ 2026.04 | Node.js, Express, React, MySQL |
+| [PriceCart](pricecart/README.md)<br>장보기 계산기 웹앱 | 가격표를 찍으면 합계와 남은 예산을 보여 주고, 장볼 목록과 가계부를 로그인 없이 가족과 같이 봅니다 | 개인 프로젝트, 1인 기획·개발<br>2026.07 ~ 운영 중 | React, TypeScript, Vercel, Google Vision, Redis |
 | 베이커리 카페 브랜드 웹사이트 | 대한민국 제과명장 베이커리의 웹사이트를 IA 설계, 디자인 목업, 아임웹 구현 순서로 만들고 있습니다 | 외주, 기획·제작<br>2026.10 ~ 진행 중 | 아임웹, 생성형 AI |
 
 ---
@@ -50,6 +51,14 @@
 - 출고율이 현장 체감과 맞지 않던 원인을 업무 기준(D-2)에서 찾아 계산 기준을 바로잡았습니다.
 - 필터를 건 상태에서 전체 선택하면 보이지 않는 데이터까지 바뀌는 버그처럼, 데이터가 잘못 바뀔 수 있는 부분부터 먼저 막았습니다.
 
+### [PriceCart](pricecart/README.md)
+
+장 보면서 쓰려고 만든 합계 계산기로 시작해, 지금은 가족이 같이 쓰는 장볼 목록과 가계부까지 하는 개인 프로젝트입니다.
+
+- 가격표 OCR 결과에서 판매가를 고를 때 글자 크기, 천 단위 쉼표, 위치로 점수를 매기고, 정상가나 할인 표시가 보이면 할인 상품을 미리 골라 둡니다.
+- 영수증은 단어 좌표로 줄을 다시 묶어 상품명, 단가, 수량, 금액을 읽습니다. 마트마다 다른 표 모양을 실제 영수증으로 맞춰 갔습니다.
+- 로그인 없이 링크로 가족과 공유하고, 두 사람이 동시에 고쳐도 꼬이지 않도록 항목별 병합을 Redis Lua 스크립트로 한 번에 처리합니다.
+
 ---
 
 ## 경력
@@ -69,6 +78,6 @@
 | Backend | Java (Spring Boot, Spring Security), Node.js (Express), Python (Flask) |
 | Database | PostgreSQL (pgvector), MySQL, MariaDB, Oracle, Redis, Flyway |
 | Frontend | React, TypeScript, Vite |
-| AI | Claude API, RAG, Ollama 임베딩 |
+| AI | Claude API, RAG, Ollama 임베딩, Google Vision OCR |
 | Infra | AWS (EC2), Oracle Cloud, Docker Compose, Cloudflare Tunnel, Nginx, Vercel |
 | 연동 | Webhook, 카카오 알림톡(알리고), Google Sheets, Apps Script, 사방넷 Open API, AWS SES |
