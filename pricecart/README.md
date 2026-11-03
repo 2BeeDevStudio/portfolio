@@ -1,8 +1,5 @@
 # PriceCart 장보기 계산기
 
-> 개인 프로젝트, 2026.07 ~ 운영 중 (가족이 실제로 쓰고 있습니다)<br>
-> 서비스 [pricecart.2bee.dev](https://pricecart.2bee.dev)
-
 ![PriceCart 소개 이미지](images/hero.jpg)
 
 마트에서 장을 보다 보면 계산대에 가기 전까지 얼마를 썼는지 잘 모릅니다. 할인 상품, 1+1 행사, 정가가 섞여 있으면 머릿속으로 더하기도 어렵습니다.
